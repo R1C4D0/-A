@@ -1,0 +1,12 @@
+# 忽略所有文件
+*
+
+# 但不忽略任何 .py 文件和.gitignore
+!*.py
+!.gitignore
+
+# 忽略特定的 test.py 文件
+test.py
+
+# 确保所有目录都不被忽略
+!*/
