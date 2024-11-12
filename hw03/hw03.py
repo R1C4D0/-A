@@ -178,7 +178,23 @@ def count_dollars_upward(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def count_helper(total, smallest_bill_allowed):
+        ''' retrun the number of ways to make change using bills.
+        @param total: 余额
+        @param smallest_bill_allowed: 当前允许使用的最小面额
+        '''
+        if 0 == total:
+            return 1
+        if total < 0 or smallest_bill_allowed is None:
+            return 0
+        # Case 1: Use the smallest bill
+        ways_with_smallest_bill = count_helper(total - smallest_bill_allowed, smallest_bill_allowed)
+        # Case 2: Don't use the smallest bill, move to the next larger bill
+        ways_without_smallest_bill = count_helper(total, next_larger_dollar(smallest_bill_allowed))
+        return ways_with_smallest_bill + ways_without_smallest_bill
+        
 
+    return count_helper(total, 1)
 
 def print_move(origin, destination):
     """Print instructions to move a disk."""
@@ -213,6 +229,12 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
+    if 1 == n:
+        print_move(start, end)
+    else:
+        move_stack(n - 1, start, 6 - start - end)# 6 - start - end 表示非start和end的柱子，很巧妙
+        move_stack(1, start, end)
+        move_stack(n - 1, 6 - start - end, end)
 
 
 from operator import sub, mul
@@ -228,5 +250,5 @@ def make_anonymous_factorial():
     ...     ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    return (lambda f: f(f))(lambda f: (lambda x: 1 if x == 1 else mul(x, f(f)(sub(x, 1)))))
 
