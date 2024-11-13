@@ -158,6 +158,18 @@ def memo_diff(diff_function):
     def memoized(typed, source, limit):
         # BEGIN PROBLEM EC
         "*** YOUR CODE HERE ***"
+        # the memo function take all the arguments as the key, while the diff_function only takes the (typed, source) as the key
+        if (typed, source) not in cache:
+            result = diff_function(typed, source, limit)
+            cache[(typed, source)] = (result, limit)
+            return result
+        else:
+            if cache[(typed, source)][1] >= limit:
+                return cache[(typed, source)][0]
+            else:
+                result = diff_function(typed, source, limit)
+                cache[(typed, source)] = (result,  limit)
+                return result
         # END PROBLEM EC
 
     return memoized
@@ -167,7 +179,7 @@ def memo_diff(diff_function):
 # Phase 2 #
 ###########
 
-
+@memo
 def autocorrect(typed_word, word_list, diff_function, limit):
     """Returns the element of WORD_LIST that has the smallest difference
     from TYPED_WORD based on DIFF_FUNCTION. If multiple words are tied for the smallest difference,
@@ -234,7 +246,7 @@ def furry_fixes(typed, source, limit):
     else :
         return furry_fixes(typed[1:], source[1:], limit)
 
-
+@memo_diff
 def minimum_mewtations(typed, source, limit):
     """A diff function for autocorrect that computes the edit distance from TYPED to SOURCE.
     This function takes in a string TYPED, a string SOURCE, and a number LIMIT.
@@ -259,17 +271,20 @@ def minimum_mewtations(typed, source, limit):
     # Recursive cases should go below here
     if limit < 0:
         return beyond_limit
+    elif 0 == limit:
+        return 0 if typed == source else beyond_limit
     elif typed == source:
         return 0
     else:
-        add = minimum_mewtations(typed, source[1:], limit - 1) + 1
-        remove = minimum_mewtations(typed[1:], source, limit - 1) + 1
-        substitute = minimum_mewtations(typed[1:], source[1:], limit - 1) + 1
-        no_action = minimum_mewtations(typed[1:], source[1:], limit) if typed[0] == source[0] else beyond_limit
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        return min(add, remove, substitute, no_action)
-        # END
+        if typed[0] == source[0]:
+            no_action = minimum_mewtations(typed[1:], source[1:], limit) if typed[0] == source[0] else beyond_limit
+            return no_action
+        else:
+            add = minimum_mewtations(typed, source[1:], limit - 1) + 1
+            remove = minimum_mewtations(typed[1:], source, limit - 1) + 1
+            substitute = minimum_mewtations(typed[1:], source[1:], limit - 1) + 1
+            return min(add, remove, substitute)
+    # END
 
 
 # Ignore the line below
