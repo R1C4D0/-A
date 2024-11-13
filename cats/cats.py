@@ -384,7 +384,14 @@ def fastest_words(words_and_times):
     word_indices = range(len(words))    # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
-    
+    fastest_words_list = [[] for _ in player_indices]
+    for w_i, word in enumerate(words):
+        play_and_time = [ (p_i, times[p_i][w_i]) for p_i in player_indices]
+        #find min index
+        min_index = min(play_and_time, key=lambda x: x[1])[0]
+        fastest_words_list[min_index].append(word)
+        
+    return fastest_words_list
     # END PROBLEM 10
 
 
