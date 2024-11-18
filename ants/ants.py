@@ -482,12 +482,22 @@ class SlowThrower(ThrowerAnt):
     name = 'Slow'
     food_cost = 6
     # BEGIN Problem EC 1
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    slow_time = 5   # The time that the bee will be slowed
     # END Problem EC 1
 
     def throw_at(self, target):
         # BEGIN Problem EC 1
         "*** YOUR CODE HERE ***"
+        def slow_action(gamestate):
+            if target.slow_count >= 0:# in case -2^32 - 1 become 2^32 - 1, add if condition
+                target.slow_count -= 1
+            if target.slow_count >= 0 and gamestate.time % 2 == 1:# do nothing in the odd time
+                return
+            else:
+                Bee.action(target, gamestate)
+        target.slow_count = SlowThrower.slow_time
+        target.action = slow_action
         # END Problem EC 1
 
 
