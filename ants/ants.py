@@ -378,6 +378,23 @@ class BodyguardAnt(ContainerAnt):
 
 # BEGIN Problem 9
 # The TankAnt class
+
+
+class TankAnt(ContainerAnt):
+    """TankAnt provides both offense and defense."""
+    implemented = True   # Change to True to view in the GUI
+    name = 'Tank'
+    food_cost = 6
+    damage = 1
+    def __init__(self, health=2):
+        super().__init__(health)
+
+    def action(self, gamestate):
+        for bee in self.place.bees[:]:# use [:] to make a copy, avoid changing the list while iterating 
+            bee.reduce_health(self.damage)
+        if self.ant_contained:
+            self.ant_contained.action(gamestate)
+
 # END Problem 9
 
 
