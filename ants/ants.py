@@ -279,6 +279,14 @@ class FireAnt(Ant):
 
 # BEGIN Problem 6
 # The WallAnt class
+class WallAnt(Ant):
+    """WallAnt provides defense against bees."""
+    implemented = True   # Change to True to view in the GUI
+    name = 'Wall'
+    food_cost = 4
+    def __init__(self, health=4):
+        super().__init__(health)
+        
 # END Problem 6
 
 # BEGIN Problem 7
