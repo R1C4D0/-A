@@ -255,7 +255,7 @@ class FireAnt(Ant):
     food_cost = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 5
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 5
 
     def __init__(self, health=3):
@@ -271,6 +271,10 @@ class FireAnt(Ant):
         """
         # BEGIN Problem 5
         "*** YOUR CODE HERE ***"
+        damage_to_bee = amount + self.damage if self.health <= amount else amount
+        for bee in list(self.place.bees):
+            bee.reduce_health(damage_to_bee)
+        super().reduce_health(amount)
         # END Problem 5
 
 # BEGIN Problem 6
