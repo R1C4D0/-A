@@ -166,23 +166,39 @@ class ThrowerAnt(Ant):
     damage = 1
     # ADD/OVERRIDE CLASS ATTRIBUTES HERE
     food_cost = 3
-    
-    def nearest_bee(self):
+    lower_bound = 0
+    upper_bound = int(1e9)
+    def nearest_bee(self, lower_bound=None, upper_bound=None):
         """Return the nearest Bee in a Place (that is not the hive) connected to
         the ThrowerAnt's Place by following entrances.
 
         This method returns None if there is no such Bee (or none in range).
         """
         # BEGIN Problem 3 and 4
+        if lower_bound is None:
+            lower_bound = self.lower_bound
+        if upper_bound is None:
+            upper_bound = self.upper_bound
         if self.place.is_hive:
             return random_bee([])
-        elif self.place.entrance.is_hive:
+        elif self.place.entrance.is_hive or upper_bound <= 0:
             return random_bee(self.place.bees)
         else:
-            place_with_bees = self.place
-            while not place_with_bees.entrance.is_hive and not place_with_bees.bees:
-                place_with_bees = place_with_bees.entrance
-            return random_bee(place_with_bees.bees)        
+            place_to_check = self.place
+            for i in range(lower_bound):# move to the lower_bound
+                if place_to_check.is_hive: # move to the hive before reaching the lower_bound
+                    return random_bee([])
+                elif place_to_check.entrance:
+                    place_to_check = place_to_check.entrance
+            for i in range(lower_bound, 1 + upper_bound, 1): # check [lower_bound, upper_bound], total 1 + upper_bound - lower_bound times
+                if place_to_check.is_hive:
+                    return random_bee([])
+                elif place_to_check.bees:
+                    return random_bee(place_to_check.bees)
+                elif place_to_check.entrance:
+                    place_to_check = place_to_check.entrance
+                else:
+                    break
         # END Problem 3 and 4
 
     def throw_at(self, target):
@@ -214,7 +230,8 @@ class ShortThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    upper_bound = 3
     # END Problem 4
 
 
@@ -225,7 +242,8 @@ class LongThrower(ThrowerAnt):
     food_cost = 2
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    lower_bound = 5
     # END Problem 4
 
 
