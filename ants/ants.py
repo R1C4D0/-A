@@ -102,8 +102,9 @@ class Ant(Insect):
     is_container = False
     # ADD CLASS ATTRIBUTES HERE
 
-    def __init__(self, health=1):
+    def __init__(self, health=1, damage_hasbeen_doubled=False):
         super().__init__(health)
+        self.damage_hasbeen_doubled = damage_hasbeen_doubled
 
     def can_contain(self, other):
         return False
@@ -142,6 +143,9 @@ class Ant(Insect):
         """Double this ants's damage, if it has not already been doubled."""
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        if not self.damage_hasbeen_doubled:
+            self.damage_hasbeen_doubled = True
+            self.damage *= 2
         # END Problem 12
 
 
@@ -174,6 +178,11 @@ class ThrowerAnt(Ant):
     food_cost = 3
     lower_bound = 0
     upper_bound = int(1e9)
+    
+    def __init__(self, health=1):
+        super().__init__(health)
+        self.damage = ThrowerAnt.damage
+    
     def nearest_bee(self, lower_bound=None, upper_bound=None):
         """Return the nearest Bee in a Place (that is not the hive) connected to
         the ThrowerAnt's Place by following entrances.
@@ -267,6 +276,7 @@ class FireAnt(Ant):
     def __init__(self, health=3):
         """Create an Ant with a HEALTH quantity."""
         super().__init__(health)
+        self.damage = FireAnt.damage
 
     def reduce_health(self, amount):
         """Reduce health by AMOUNT, and remove the FireAnt from its place if it
@@ -388,6 +398,7 @@ class TankAnt(ContainerAnt):
     damage = 1
     def __init__(self, health=2):
         super().__init__(health)
+        self.damage = TankAnt.damage
 
     def action(self, gamestate):
         for bee in self.place.bees[:]:# use [:] to make a copy, avoid changing the list while iterating 
@@ -429,7 +440,7 @@ class QueenAnt(ThrowerAnt):
     food_cost = 7
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 12
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 12
 
     def action(self, gamestate):
@@ -438,6 +449,15 @@ class QueenAnt(ThrowerAnt):
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        super().action(gamestate) # standard thrower action
+        place_to_check = self.place.exit
+        while place_to_check:
+            if place_to_check.ant:
+                place_to_check.ant.double()
+                if place_to_check.ant.is_container:
+                    if place_to_check.ant.ant_contained:
+                        place_to_check.ant.ant_contained.double()
+            place_to_check = place_to_check.exit
         # END Problem 12
 
     def reduce_health(self, amount):
@@ -446,6 +466,9 @@ class QueenAnt(ThrowerAnt):
         """
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        if self.health <= amount:
+            ants_lose()
+        super().reduce_health(amount)
         # END Problem 12
 
 
