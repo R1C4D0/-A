@@ -490,13 +490,14 @@ class SlowThrower(ThrowerAnt):
         # BEGIN Problem EC 1
         "*** YOUR CODE HERE ***"
         def slow_action(gamestate):
-            if target.slow_count >= 0:# in case -2^32 - 1 become 2^32 - 1, add if condition
-                target.slow_count -= 1
-            if target.slow_count >= 0 and gamestate.time % 2 == 1:# do nothing in the odd time
-                return
-            else:
+            if not (target.slow_count_rest > 0 and gamestate.time % 2 == 1):# if bees are being slowed and time is odd, do nothing
                 Bee.action(target, gamestate)
-        target.slow_count = SlowThrower.slow_time
+            # In Python, this check is unnecessary. 
+            # Python integers do not have a fixed size limit, and integer overflow problems like C++ do not occur
+            # if target.slow_count_rest > 0:# in case -2^32 - 1 become 2^32 - 1, add if condition
+            target.slow_count_rest -= 1
+            
+        target.slow_count_rest = SlowThrower.slow_time
         target.action = slow_action
         # END Problem EC 1
 
@@ -507,7 +508,7 @@ class ScaryThrower(ThrowerAnt):
     name = 'Scary'
     food_cost = 6
     # BEGIN Problem EC 2
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem EC 2
 
     def throw_at(self, target):
@@ -577,7 +578,10 @@ class Bee(Insect):
     damage = 1
     is_waterproof = True
 
-
+    def __init__(self, health):
+        super().__init__(health)
+        self.has_been_scare = False
+    
     def sting(self, ant):
         """Attack an ANT, reducing its health by 1."""
         ant.reduce_health(self.damage)
@@ -587,7 +591,7 @@ class Bee(Insect):
         self.place.remove_insect(self)
         place.add_insect(self)
 
-    def blocked(self):
+    def blocked(self)   :
         """Return True if this Bee cannot advance to the next Place."""
         # Special handling for NinjaAnt
         # BEGIN Problem EC 3
@@ -623,6 +627,11 @@ class Bee(Insect):
         """
         # BEGIN Problem EC 2
         "*** YOUR CODE HERE ***"
+        if not self.has_been_scare:
+            self.has_been_scare = True
+            self.scare_count_rest = length
+        else:
+            return
         # END Problem EC 2
 
 
