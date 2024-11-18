@@ -291,6 +291,25 @@ class WallAnt(Ant):
 
 # BEGIN Problem 7
 # The HungryAnt Class
+class HungryAnt(Ant):
+    """HungryAnt will take a bite out of the nearest Bee in its place each turn."""
+    implemented = True   # Change to True to view in the GUI
+    name = 'Hungry'
+    food_cost = 4
+    chew_cooldown = 3
+    
+    def __init__(self, health=1, cooldown=0):
+        super().__init__(health)
+        self.cooldown = cooldown
+    
+    def action(self, gamestate):
+        if self.cooldown == 0:
+            target = random_bee(self.place.bees)
+            if target:
+                target.reduce_health(target.health)
+                self.cooldown = self.chew_cooldown
+        else:
+            self.cooldown -= 1
 # END Problem 7
 
 
