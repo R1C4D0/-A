@@ -22,7 +22,7 @@ class Place:
         self.name = name
         self.exit = exit
         self.bees = []        # A list of Bees
-        self.ant = None       # An Ant
+        self.ant = None       # A place can contain at most two ants if one of them is a ContainerAnt, and self.ant is the ContainerAnt instance
         self.entrance = None  # A Place
         # Phase 1: Add an entrance to the exit
         # BEGIN Problem 2
@@ -548,21 +548,38 @@ class LaserAnt(ThrowerAnt):
     food_cost = 10
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem EC 4
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    damage = 2
     # END Problem EC 4
 
     def __init__(self, health=1):
         super().__init__(health)
         self.insects_shot = 0
+        self.damage = LaserAnt.damage
 
     def insects_in_front(self):
         # BEGIN Problem EC 4
-        return {}
+        insects_and_distances = {}
+        place_to_check = self.place
+        distance = 0
+        while place_to_check:
+            # add the ant and the contained ant
+            if place_to_check.ant:
+                insects_and_distances[place_to_check.ant] = distance
+                if place_to_check.ant.is_container and (not place_to_check.ant.can_contain(LaserAnt())):
+                    insects_and_distances[place_to_check.ant.ant_contained] = distance
+            # add the bees
+            for bee in place_to_check.bees:
+                insects_and_distances[bee] = distance
+            place_to_check = place_to_check.entrance
+            distance += 1
+        insects_and_distances.pop(self) # remove the laser ant itself
+        return insects_and_distances
         # END Problem EC 4
-
+    
     def calculate_damage(self, distance):
         # BEGIN Problem EC 4
-        return 0
+        return max(self.damage - (1 / 16) * self.insects_shot - 0.25 * distance, 0)
         # END Problem EC 4
 
     def action(self, gamestate):
