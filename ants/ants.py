@@ -489,16 +489,17 @@ class SlowThrower(ThrowerAnt):
     def throw_at(self, target):
         # BEGIN Problem EC 1
         "*** YOUR CODE HERE ***"
+        """ bees do nothing when being slowed and the time is odd, otherwise, do the normal action
+            frozen bees: slowed and scared bees are frozen, they don't move, 
+            and the scared_count_rest don't decrease when the bees are frozen
+        """
         def slow_action(gamestate):
-            if target.slow_count_rest > 0:# being slowed
-                if gamestate.time % 2 == 0:
-                    Bee.action(target, gamestate)
-            else:
+            if not (target.get_state('slow_count_rest') > 0 and gamestate.time % 2 == 1):
                 Bee.action(target, gamestate)
-            if target.slow_count_rest > 0:# in case -2^32 - 1 become 2^32 - 1, add if condition
-                target.slow_count_rest -= 1
-        target.slow_count_rest = SlowThrower.slow_time
+            else:
+                target.set_state('slow_count_rest', target.get_state('slow_count_rest') - 1)
         target.action = slow_action
+        target.set_state('slow_count_rest', SlowThrower.slow_time)
         # END Problem EC 1
 
 
@@ -509,11 +510,13 @@ class ScaryThrower(ThrowerAnt):
     food_cost = 6
     # BEGIN Problem EC 2
     implemented = True   # Change to True to view in the GUI
+    scare_count = 2
     # END Problem EC 2
 
     def throw_at(self, target):
         # BEGIN Problem EC 2
         "*** YOUR CODE HERE ***"
+        target.scare(ScaryThrower.scare_count)
         # END Problem EC 2
 
 
@@ -580,7 +583,7 @@ class Bee(Insect):
 
     def __init__(self, health):
         super().__init__(health)
-        self.has_been_scare = False
+        self.init_state()
     
     def sting(self, ant):
         """Attack an ANT, reducing its health by 1."""
@@ -604,13 +607,16 @@ class Bee(Insect):
 
         gamestate -- The GameState, used to access game state information.
         """
-        destination = self.place.exit
+        destination = (self.place.exit if not self.get_state('scare_count_rest') > 0 else (
+            self.place.entrance if self.place.entrance else self.place))
 
 
         if self.blocked():
             self.sting(self.place.ant)
         elif self.health > 0 and destination is not None:
             self.move_to(destination)
+        
+        self.update_state_per_turn()
 
     def add_to(self, place):
         place.bees.append(self)
@@ -629,11 +635,25 @@ class Bee(Insect):
         "*** YOUR CODE HERE ***"
         if not self.has_been_scare:
             self.has_been_scare = True
-            self.scare_count_rest = length
+            self.set_state('scare_count_rest', length)
         else:
             return
         # END Problem EC 2
-
+    def set_state(self, key, value):
+        self.state_dict[key] = value
+    
+    def get_state(self, key):
+        return self.state_dict[key]
+    
+    def init_state(self):
+        self.has_been_scare = False
+        self.state_dict = {}
+        self.state_dict['scare_count_rest'] = 0
+        self.state_dict['slow_count_rest'] = 0
+    
+    def update_state_per_turn(self):
+        for key in self.state_dict:
+            self.set_state(key, self.state_dict[key] - 1)
 
 class Wasp(Bee):
     """Class of Bee that has higher damage."""
