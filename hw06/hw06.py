@@ -183,8 +183,12 @@ def two_list(vals, counts):
     Link(1, Link(1, Link(3, Link(3, Link(2)))))
     """
     "*** YOUR CODE HERE ***"
-
-
+    linked_list = Link(vals[-1])
+    counts[-1] -= 1
+    for i in range(len(vals) - 1, -1, -1):
+        while counts[i] > 0:
+            linked_list, counts[i] = Link(vals[i], linked_list), counts[i] - 1
+    return linked_list
 class Link:
     """A linked list.
 
