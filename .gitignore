@@ -1,9 +1,11 @@
 # 忽略所有文件
 *
 
-# 但不忽略任何 .py 文件和.gitignore
-!*.py
+# 但不忽略任何 lab.py/hw.py和.gitignore
+!*lab*.py
+!*hw*.py
 !.gitignore
+!*.scm
 
 # 忽略特定的 test.py 文件
 test.py
