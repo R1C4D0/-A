@@ -26,7 +26,7 @@
   
   (define (helper s seen)
     (cond ((null? s) '())
-          ((contains? seen (car s)) (helper (cdr s) seen))
+          ((contains? seen (car s)) (my-filter (lambda (x) (not (eq? x (car s)))) (helper (cdr s) seen)))
           (else (cons (car s) (helper (cdr s) (cons (car s) seen))))))
   
   (helper s '())
