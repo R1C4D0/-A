@@ -1,7 +1,6 @@
 import builtins
 
 from pair import *
-from scheme_utils import scheme_symbolp
 class SchemeError(Exception):
     """Exception indicating an error in a Scheme program."""
 
@@ -27,6 +26,7 @@ class Frame:
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN PROBLEM 1
         "*** YOUR CODE HERE ***"
+        from scheme_utils import scheme_symbolp
         if not scheme_symbolp(symbol):
             raise SchemeError('define: not a symbol: {0}'.format(symbol))
         self.bindings[symbol] = value
