@@ -1,7 +1,7 @@
 import builtins
 
 from pair import *
-
+from scheme_utils import scheme_symbolp
 class SchemeError(Exception):
     """Exception indicating an error in a Scheme program."""
 
@@ -27,12 +27,20 @@ class Frame:
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN PROBLEM 1
         "*** YOUR CODE HERE ***"
+        if not scheme_symbolp(symbol):
+            raise SchemeError('define: not a symbol: {0}'.format(symbol))
+        self.bindings[symbol] = value
         # END PROBLEM 1
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL. Errors if SYMBOL is not found."""
         # BEGIN PROBLEM 1
         "*** YOUR CODE HERE ***"
+        if symbol in self.bindings:
+            return self.bindings[symbol]
+        elif self.parent:
+            return self.parent.lookup(symbol)
+        # no symbol found even in the global frame
         # END PROBLEM 1
         raise SchemeError('unknown identifier: {0}'.format(symbol))
 
