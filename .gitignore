@@ -6,6 +6,7 @@
 !*hw*.py
 !.gitignore
 !*.scm
+!*scheme*.py
 
 # 忽略特定的 test.py 文件
 test.py
