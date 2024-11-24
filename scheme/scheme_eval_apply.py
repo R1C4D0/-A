@@ -34,6 +34,12 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     else:
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
+        # evaluate the operator
+        operator_procedure = scheme_eval(first, env)
+        # evaluate the operands
+        operands_scheme_list = rest.map(lambda operand: scheme_eval(operand, env))
+        # apply the operator to the operands
+        return scheme_apply(operator_procedure, operands_scheme_list, env)
         # END PROBLEM 3
 
 def scheme_apply(procedure, args, env):
