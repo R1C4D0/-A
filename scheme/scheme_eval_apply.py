@@ -127,7 +127,7 @@ def complete_apply(procedure, args, env):
     validate_procedure(procedure)
     val = scheme_apply(procedure, args, env)
     if isinstance(val, Unevaluated):
-        return scheme_eval(val.expr, val.env, True)
+        return scheme_eval(val.expr, val.env)
     else:
         return val
 
