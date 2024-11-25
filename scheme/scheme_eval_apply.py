@@ -106,7 +106,7 @@ def eval_all(expressions, env):
     while current.rest is not nil:
         scheme_eval(current.first, env)
         current = current.rest
-    return scheme_eval(current.first, env)  # return the evaluated value of the last expression
+    return scheme_eval(current.first, env, True)  # return the evaluated value of the last expression
     # END PROBLEM 6
 
 
@@ -127,7 +127,7 @@ def complete_apply(procedure, args, env):
     validate_procedure(procedure)
     val = scheme_apply(procedure, args, env)
     if isinstance(val, Unevaluated):
-        return scheme_eval(val.expr, val.env)
+        return scheme_eval(val.expr, val.env, True)
     else:
         return val
 
@@ -143,6 +143,9 @@ def optimize_tail_calls(unoptimized_scheme_eval):
         result = Unevaluated(expr, env)
         # BEGIN OPTIONAL PROBLEM 1
         "*** YOUR CODE HERE ***"
+        while isinstance(result, Unevaluated):
+            result = unoptimized_scheme_eval(result.expr, result.env)
+        return result
         # END OPTIONAL PROBLEM 1
     return optimized_eval
 
@@ -163,4 +166,4 @@ def optimize_tail_calls(unoptimized_scheme_eval):
 # Uncomment the following line to apply tail call optimization #
 ################################################################
 
-# scheme_eval = optimize_tail_calls(scheme_eval)
+scheme_eval = optimize_tail_calls(scheme_eval)
