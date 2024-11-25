@@ -207,6 +207,10 @@ def make_let_frame(bindings, env):
     names = vals = nil
     # BEGIN PROBLEM 14
     "*** YOUR CODE HERE ***"
+    bindings.map(lambda x: validate_form(x, 2, 2)) # each binding should be a symbol/name and a Scheme expression that evaluates to a value
+    names = bindings.map(lambda x: x.first)
+    vals = bindings.map(lambda x: scheme_eval(x.rest.first, env))
+    validate_formals(names) # check that the names are distinct
     # END PROBLEM 14
     return env.make_child_frame(names, vals)
 
