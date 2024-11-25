@@ -23,7 +23,16 @@
 ;; the merged lists.
 (define (merge ordered? s1 s2)
   ; BEGIN PROBLEM 16
-  'replace-this-line
+  (if (null? s1)
+      s2
+      (if (null? s2)
+          s1
+          (if (ordered? (car s1) (car s2))
+              (cons (car s1) (merge ordered? (cdr s1) s2))
+              (cons (car s2) (merge ordered? s1 (cdr s2)))
+              )
+          )
+      )
   )
   ; END PROBLEM 16
 
